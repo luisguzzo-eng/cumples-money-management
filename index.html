@@ -232,6 +232,25 @@
     text-align: center;
     margin-bottom: 32px;
   }
+  .month-nav {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 24px;
+  }
+  .nav-arrow {
+    cursor: pointer;
+    border: none;
+    background: rgba(0,0,0,0.12);
+    color: var(--black);
+    font-family: inherit;
+    font-size: 14px;
+    padding: 10px 16px;
+    border-radius: 10px;
+    transition: background 0.15s;
+  }
+  .nav-arrow:hover { background: rgba(0,0,0,0.25); }
+  .nav-arrow:disabled { opacity: 0.2; cursor: default; }
   .month-detail-header .detail-month-name {
     font-size: clamp(20px, 3vw, 32px);
     color: var(--black);
@@ -564,7 +583,11 @@
 <div id="view-month" class="view">
   <button class="back-btn" onclick="goTo('view-home')">◀ VOLVER</button>
   <div class="month-detail-header">
-    <div class="detail-month-name" id="detail-title"></div>
+    <div class="month-nav">
+      <button class="nav-arrow" id="nav-prev" onclick="navigateMonth(-1)">◀</button>
+      <div class="detail-month-name" id="detail-title"></div>
+      <button class="nav-arrow" id="nav-next" onclick="navigateMonth(1)">▶</button>
+    </div>
   </div>
   <div class="people-list-wrap">
     <div class="people-list" id="detail-people"></div>
@@ -810,11 +833,29 @@ function renderGrid() {
   }
 }
 
+// ===== MONTH NAVIGATION =====
+let currentMonth = 1;
+const ACTIVE_MONTHS = Object.keys(DATA).map(Number).filter(m => DATA[m].people.length > 0).sort((a,b) => a - b);
+
+function navigateMonth(dir) {
+  const idx = ACTIVE_MONTHS.indexOf(currentMonth);
+  const next = ACTIVE_MONTHS[idx + dir];
+  if (next) openMonth(next);
+}
+
+function updateNavArrows() {
+  const idx = ACTIVE_MONTHS.indexOf(currentMonth);
+  document.getElementById('nav-prev').disabled = idx === 0;
+  document.getElementById('nav-next').disabled = idx === ACTIVE_MONTHS.length - 1;
+}
+
 // ===== OPEN MONTH DETAIL =====
 function openMonth(month) {
+  currentMonth = month;
   const monthData = DATA[month] || { days: [], people: [] };
 
   document.getElementById('detail-title').textContent = MONTH_NAMES[month-1];
+  updateNavArrows();
 
   const list = document.getElementById('detail-people');
   list.innerHTML = '';
