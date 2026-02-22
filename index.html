@@ -1,0 +1,942 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cumples Money Management</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Montserrat:ital,wght@0,400;0,600;1,400;1,600&display=swap');
+
+  :root {
+    --sky: #7ec8e3;
+    --sky2: #b8e4f9;
+    --grass: #4a9a1a;
+    --ground: #c8903a;
+    --coin: #f5a623;
+    --black: #1a1a1a;
+    --white: #ffffff;
+    --shadow: rgba(0,0,0,0.18);
+    --mla-blue: #3483fa;
+    --mlb-yellow: #ffe600;
+    --mlb-dark: #222;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html, body { overflow-x: hidden; }
+
+  body {
+    font-family: 'Press Start 2P', monospace, Arial;
+    background: linear-gradient(180deg, var(--sky) 0%, var(--sky2) 100%);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ===== VIEWS ===== */
+  .view { display: none; }
+  .view.active { display: flex; flex-direction: column; align-items: center; min-height: 100vh; padding: 40px 20px 80px; position: relative; z-index: 1; }
+
+  /* ===== HEADER TITLE ===== */
+  .main-title {
+    font-size: clamp(24px, 4vw, 40px);
+    color: var(--black);
+    text-align: center;
+    letter-spacing: 2px;
+    text-shadow: 3px 3px 0 rgba(255,255,255,0.5);
+    margin-bottom: 48px;
+    line-height: 1.8;
+  }
+
+  .main-title {
+    margin-bottom: 32px;
+  }
+
+  /* ===== CLOUDS ===== */
+  .clouds {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    overflow: hidden;
+  }
+
+  .cloud {
+    position: absolute;
+    image-rendering: pixelated;
+    background: url('https://www.figma.com/api/mcp/asset/ad7e8d38-1ccf-47ff-abfa-d3cc8cbe907c') center/contain no-repeat;
+  }
+
+  @keyframes drift {
+    from { transform: translateX(0); }
+    to   { transform: translateX(-130vw); }
+  }
+
+  /* ===== BACK BUTTON ===== */
+  .back-btn {
+    align-self: flex-start;
+    cursor: pointer;
+    border: none;
+    background: rgba(0,0,0,0.15);
+    color: var(--black);
+    font-family: inherit;
+    font-size: 8px;
+    padding: 8px 14px;
+    border-radius: 8px;
+    margin-bottom: 28px;
+    letter-spacing: 1px;
+    transition: background 0.15s;
+  }
+  .back-btn:hover { background: rgba(0,0,0,0.25); }
+
+  /* ===== SECTION TITLE ===== */
+  .section-title {
+    font-size: clamp(10px, 1.8vw, 16px);
+    color: var(--black);
+    text-align: center;
+    margin-bottom: 32px;
+    letter-spacing: 2px;
+    text-shadow: 2px 2px 0 rgba(255,255,255,0.4);
+  }
+
+  /* ===== MONTHS GRID ===== */
+  .months-grid {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 32px 28px;
+    max-width: 1200px;
+    width: 100%;
+  }
+
+  .month-btn {
+    cursor: pointer;
+    border: none;
+    outline: none;
+    background: none;
+    font-family: inherit;
+    width: 100%;
+  }
+
+  .month-tile {
+    background: #e87820;
+    border-radius: 20px;
+    padding: 28px 20px 22px;
+    text-align: center;
+    position: relative;
+    border: 4px solid #000;
+    box-shadow:
+      inset 0 0 0 9px #f0b098,
+      4px 4px 0 0 #000;
+    outline: 3px solid #000;
+    outline-offset: -15px;
+    transition: transform 0.08s, box-shadow 0.08s, background 0.3s;
+  }
+  .month-btn:hover .month-tile {
+    transform: translate(-1px, -2px);
+    background: #2a7a2a;
+    box-shadow:
+      inset 0 0 0 9px #4db84d,
+      5px 6px 0 0 #000;
+  }
+  .month-btn:active .month-tile {
+    transform: translate(3px, 3px);
+    box-shadow:
+      inset 0 0 0 9px #d89880,
+      1px 1px 0 0 #000;
+  }
+
+  .month-coin {
+    width: 36px; height: 40px;
+    margin: 0 auto 12px;
+    image-rendering: pixelated;
+    display: block;
+    transition: transform 0.1s;
+  }
+
+  @keyframes coin-spin {
+    0%   { transform: rotateY(0deg); }
+    100% { transform: rotateY(360deg); }
+  }
+
+  .month-btn:hover .month-coin {
+    animation: coin-spin 0.6s linear 1;
+  }
+  .month-tile .month-name {
+    font-size: 13px;
+    letter-spacing: 0.5px;
+    color: #fff;
+    margin-bottom: 8px;
+    text-shadow: 1px 1px 0 rgba(0,0,0,0.2);
+  }
+
+  .mini-avatars {
+    display: flex;
+    justify-content: center;
+    min-height: 28px;
+  }
+
+  .mini-avatar {
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    border: 2px solid white;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    display: flex; align-items: center; justify-content: center;
+    font-family: Arial Black, Arial;
+    font-size: 8px;
+    font-weight: 900;
+    color: white;
+    overflow: hidden;
+    flex-shrink: 0;
+    margin-left: -8px;
+    transition: border-color 0.3s;
+  }
+  .mini-avatar:first-child { margin-left: 0; }
+  .month-btn:hover .mini-avatar { border-color: #4db84d; }
+
+  .mini-avatar img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+  }
+
+  .mini-avatar-empty {
+    color: rgba(0,0,0,0.25);
+    font-size: 16px;
+    margin-left: 0;
+  }
+
+  .month-btn.disabled {
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+  .month-btn.disabled .month-tile {
+    filter: grayscale(1);
+    box-shadow: inset 0 0 0 9px #ccc, 4px 4px 0 0 #000;
+  }
+  .month-btn.disabled:hover .month-coin {
+    animation: none;
+  }
+
+  .month-pill {
+    display: inline-block;
+    background: rgba(0,0,0,0.18);
+    color: #fff;
+    font-size: 7px;
+    padding: 3px 8px;
+    border-radius: 20px;
+    margin-bottom: 12px;
+    letter-spacing: 0.5px;
+  }
+
+
+  /* ===== MONTH DETAIL VIEW ===== */
+  .month-detail-header {
+    text-align: center;
+    margin-bottom: 32px;
+  }
+  .month-detail-header .detail-month-name {
+    font-size: clamp(20px, 3vw, 32px);
+    color: var(--black);
+    text-shadow: 2px 2px 0 rgba(255,255,255,0.5);
+    margin-bottom: 8px;
+  }
+
+  .people-list-wrap {
+    width: 100%;
+  }
+
+  .people-list {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 20px;
+    overflow-x: auto;
+    width: 100%;
+    padding: 30px 20px;
+    justify-content: safe center;
+  }
+
+  .person-card {
+    width: 240px;
+    min-height: 380px;
+    cursor: pointer;
+    margin: 0 16px;
+    position: relative;
+  }
+
+  .card-inner {
+    position: relative;
+    width: 100%;
+    min-height: 380px;
+    perspective: 2000px;
+  }
+
+  .card-face {
+    position: absolute;
+    inset: 0;
+    background: #e87820;
+    border-radius: 20px;
+    padding: 32px 20px;
+    text-align: center;
+    border: 4px solid #000;
+    box-shadow:
+      inset 0 0 0 9px #f0b098,
+      4px 4px 0 0 #000;
+    outline: 3px solid #000;
+    outline-offset: -15px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    backface-visibility: hidden;
+  }
+
+  /* base = transiciones de hover-OUT: dorso se oculta primero, luego aparece el frente */
+  .card-front {
+    transform: rotateY(0deg);
+    transition: transform 0.25s ease-out 0.25s;
+  }
+
+  .card-back {
+    transform: rotateY(-90deg);
+    transition: transform 0.25s ease-in;
+    justify-content: center;
+    gap: 12px;
+    background: #2a7a2a;
+    box-shadow:
+      inset 0 0 0 9px #4db84d,
+      4px 4px 0 0 #000;
+  }
+
+  /* hover = transiciones de hover-IN: frente se oculta primero, luego aparece el dorso */
+  .person-card:hover .card-front {
+    transform: rotateY(90deg);
+    transition: transform 0.25s ease-in;
+  }
+
+  .person-card:hover .card-back {
+    transform: rotateY(0deg);
+    transition: transform 0.25s ease-out 0.25s;
+  }
+
+  .card-back .back-label {
+    font-size: 11px;
+    color: rgba(255,255,255,0.6);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+    line-height: 1.8;
+  }
+
+  .card-back .back-name {
+    font-size: 18px;
+    color: #fff;
+    line-height: 1.5;
+  }
+
+  .card-back .back-date {
+    color: white;
+    background: #3d9e3d;
+    border: 2px solid white;
+    padding: 8px 14px;
+    border-radius: 16px;
+    text-align: center;
+    line-height: 2;
+  }
+  .card-back .back-date .date-day {
+    display: block;
+    font-size: 14px;
+  }
+  .card-back .back-date .date-month {
+    display: block;
+    font-size: 7px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  .person-avatar-wrap {
+    position: relative;
+    width: 120px;
+    margin: 0 auto 14px;
+  }
+
+  .person-avatar {
+    width: 120px; height: 120px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 36px; font-weight: 900;
+    color: white;
+    border: 3px solid white;
+    font-family: Arial Black, Arial;
+  }
+
+  .person-day {
+    position: absolute;
+    bottom: -10px; left: 50%;
+    transform: translateX(-50%);
+    background: #000;
+    color: white;
+    font-size: 11px;
+    padding: 4px 12px;
+    border-radius: 20px;
+    white-space: nowrap;
+    border: 2px solid white;
+  }
+
+  .person-name {
+    font-size: 18px;
+    color: #fff;
+    line-height: 1.6;
+    margin-bottom: 5px;
+    margin-top: 20px;
+  }
+
+  .person-role {
+    font-size: 8px;
+    color: rgba(255,255,255,0.75);
+    line-height: 1.5;
+    white-space: nowrap;
+  }
+
+  .person-zodiac {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+    margin-top: 8px;
+  }
+
+  .zodiac-sign {
+    font-size: 7px;
+    color: rgba(255,255,255,0.6);
+    letter-spacing: 1px;
+  }
+
+  .zodiac-phrase {
+    font-size: 6px;
+    background: rgba(0,0,0,0.2);
+    color: white;
+    padding: 7px 12px;
+    border-radius: 10px;
+    letter-spacing: 0.5px;
+  }
+
+  .zodiac-quote {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 11px;
+    font-style: italic;
+    color: rgba(255,255,255,0.85);
+    text-align: center;
+    line-height: 1.5;
+    padding: 0 8px;
+    margin-top: 2px;
+  }
+
+  .person-organizer {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 8px;
+    padding-top: 8px;
+    border-top: 1px solid rgba(255,255,255,0.25);
+    text-align: left;
+  }
+  .person-organizer .org-avatar {
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    border: 2px solid white;
+    object-fit: cover;
+    flex-shrink: 0;
+  }
+  .person-organizer .org-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .person-organizer .org-label {
+    font-size: 7px;
+    color: rgba(255,255,255,0.55);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+  .person-organizer .org-name {
+    font-size: 9px;
+    color: rgba(255,255,255,0.9);
+    line-height: 1.4;
+  }
+
+  .no-birthdays {
+    text-align: center;
+    font-size: 9px;
+    color: rgba(0,0,0,0.4);
+    margin-top: 20px;
+    line-height: 2;
+  }
+
+  .budget-note {
+    font-size: 12px;
+    color: #000;
+    text-align: center;
+    margin-top: 48px;
+    line-height: 2;
+    letter-spacing: 0.5px;
+  }
+
+  /* ===== NEXT BIRTHDAY BANNER ===== */
+  .next-banner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    background: #ffffff;
+    border-radius: 20px;
+    padding: 22px 28px;
+    min-width: 280px;
+    border: 4px solid #000;
+    box-shadow: inset 0 0 0 9px #d8d8d8;
+    outline: 3px solid #000;
+    outline-offset: -15px;
+    margin-bottom: 48px;
+  }
+
+  .next-banner-label {
+    font-size: 7px;
+    color: #000;
+    letter-spacing: 2px;
+  }
+
+  .next-banner-identity {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .next-banner-info {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+  }
+
+  .next-banner-avatar {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    border: 2px solid #d8d8d8;
+    overflow: hidden;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .next-banner-countdown {
+    font-size: 11px;
+    color: #1a1a1a;
+    letter-spacing: 1px;
+    line-height: 2;
+  }
+
+  .next-banner-person {
+    font-size: 18px;
+    color: #1a1a1a;
+    letter-spacing: 1px;
+    line-height: 2;
+  }
+
+  .next-banner-date {
+    font-size: 9px;
+    color: rgba(0,0,0,0.45);
+    letter-spacing: 1px;
+  }
+
+
+</style>
+</head>
+<body>
+
+<div class="clouds" id="clouds-container"></div>
+
+<!-- ==================== HOME ==================== -->
+<div id="view-home" class="view active">
+  <div class="main-title">CUMPLES<br>MONEY MANAGEMENT</div>
+  <div id="next-banner" class="next-banner"></div>
+  <div class="months-grid" id="grid-main"></div>
+</div>
+
+<!-- ==================== MONTH DETAIL ==================== -->
+<div id="view-month" class="view">
+  <button class="back-btn" onclick="goTo('view-home')">◀ VOLVER</button>
+  <div class="month-detail-header">
+    <div class="detail-month-name" id="detail-title"></div>
+  </div>
+  <div class="people-list-wrap">
+    <div class="people-list" id="detail-people"></div>
+  </div>
+  <div class="budget-note">Para MLA el presupuesto es de 5 USD aproximadamente o 10 mil pesos.</div>
+</div>
+
+
+<script>
+// ===== DATA =====
+
+const COIN_HTML = `<img class="month-coin" src="imagenes/coin.png" alt="coin">`;
+const MONTH_NAMES = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+
+const AVATAR_COLORS = [
+  '#e8664a','#4a94d4','#d4a44a','#d45a7a','#9a5ad4',
+  '#5ad480','#d4b04a','#4ad4b0','#88d44a','#d4684a',
+  '#4a68d4','#bc4ad4','#d44a68','#4ad448','#d4884a',
+  '#6a4ad4','#d44a98','#4ad4a8','#d4a04a','#88aadd'
+];
+
+const ZODIAC = {
+  aries:       { symbol: '♈', name: 'Aries',       phrases: ['líder nato', 'va de frente', 'fuego puro', 'impaciente y valiente'],
+                 quotes: ['El fuego que te quema es el mismo que te ilumina.', 'Actuar primero, reflexionar después — esa es la valentía.', 'El coraje no es ausencia de miedo, es elegir avanzar igual.', 'Quien no arriesga, no existe.'] },
+  taurus:      { symbol: '♉', name: 'Tauro',       phrases: ['terco pero leal', 'ama el confort', 'paciente de acero', 'placer ante todo'],
+                 quotes: ['La paciencia no es esperar, es construir mientras esperas.', 'Lo bello no necesita apuro para serlo.', 'La constancia hace lo que el talento solo promete.', 'Un árbol con raíces profundas no teme a la tormenta.'] },
+  gemini:      { symbol: '♊', name: 'Géminis',     phrases: ['dos en uno', 'mente inquieta', 'siempre curioso', 'conversador eterno'],
+                 quotes: ['Toda contradicción es una invitación a conocerte mejor.', 'La curiosidad es la forma más honesta de estar vivo.', 'No es indecisión, es tener demasiadas ideas brillantes.', 'El que cambia de opinión es porque aprendió algo nuevo.'] },
+  cancer:      { symbol: '♋', name: 'Cáncer',      phrases: ['corazón blando', 'intuición salvaje', 'protector nato', 'ama su hogar'],
+                 quotes: ['Sentir profundo no es debilidad, es un superpoder.', 'El hogar no es un lugar, es una sensación que construís.', 'Tu intuición nunca miente, aunque a veces duela.', 'Proteger a los que amás es la forma más pura de amor.'] },
+  leo:         { symbol: '♌', name: 'Leo',         phrases: ['rey de la sala', 'brilla solo', 'generoso y fiero', 'necesita aplausos'],
+                 quotes: ['No apagues tu luz por miedo a opacar a otros.', 'La generosidad del que brilla multiplica la luz.', 'Un corazón grande no necesita pedir permiso para ocupar espacio.', 'Brillar no es vanidad, es honrar lo que sos.'] },
+  virgo:       { symbol: '♍', name: 'Virgo',       phrases: ['todo en orden', 'perfeccionista nato', 'analiza todo', 'detalles first'],
+                 quotes: ['El detalle que nadie ve es el que sostiene todo.', 'Perfección no es rigidez, es cuidado aplicado con amor.', 'El orden exterior refleja la claridad interior.', 'Servir con excelencia es una forma de arte.'] },
+  libra:       { symbol: '♎', name: 'Libra',       phrases: ['busca el equilibrio', 'diplomático total', 'indeciso eterno', 'ama la armonía'],
+                 quotes: ['El equilibrio no es inmovilidad, es movimiento constante y consciente.', 'La justicia empieza por ser honesto con uno mismo.', 'Ver todos los ángulos no es debilidad, es sabiduría.', 'La armonía es el arte más difícil de dominar.'] },
+  scorpio:     { symbol: '♏', name: 'Escorpio',    phrases: ['intensidad pura', 'no olvida nada', 'misterioso nato', 'todo o nada'],
+                 quotes: ['La transformación duele porque algo tiene que morir para que nazca algo mejor.', 'El que no teme a su propia oscuridad puede enfrentarlo todo.', 'La intensidad no es exceso, es presencia total.', 'Renacer es el único ciclo que vale la pena.'] },
+  sagittarius: { symbol: '♐', name: 'Sagitario',   phrases: ['libre como el viento', 'optimista nato', 'aventura siempre', 'flechas al cielo'],
+                 quotes: ['La libertad no es ausencia de límites, es elegir los propios.', 'Cada horizonte que alcanzás revela uno nuevo más lejos.', 'El optimismo no es ingenuidad, es una decisión filosófica.', 'Vivir es el mejor argumento contra el miedo.'] },
+  capricorn:   { symbol: '♑', name: 'Capricornio', phrases: ['metas o muerte', 'trabajo duro', 'serio pero divertido', 'la cima es suya'],
+                 quotes: ['El tiempo que invertís hoy es la libertad que cosechás mañana.', 'La disciplina es la forma más radical de quererse.', 'No hay atajo que llegue al mismo lugar que el camino.', 'La cima no te espera, te merece.'] },
+  aquarius:    { symbol: '♒', name: 'Acuario',     phrases: ['raro y único', 'piensa diferente', 'rebelde con causa', 'ahead of its time'],
+                 quotes: ['El mundo no cambia solo, necesita a alguien dispuesto a ser incomprendido primero.', 'La originalidad es la única forma de honestidad real.', 'Ser diferente no es un error del sistema, es una actualización.', 'Las ideas que hoy parecen locas son las que cambian todo.'] },
+  pisces:      { symbol: '♓', name: 'Piscis',      phrases: ['cabeza en las nubes', 'sueña despierto', 'empatía nivel dios', 'vive en su mundo'],
+                 quotes: ['Los sueños no son escapismo, son el mapa de lo que puede ser.', 'Sentir lo que sienten los demás es el don más humano que existe.', 'La realidad es una de las muchas versiones posibles.', 'Quien imagina, ya está creando.'] },
+};
+
+function getZodiacSign(month, day) {
+  if ((month === 3 && day >= 21) || (month === 4 && day <= 19)) return ZODIAC.aries;
+  if ((month === 4 && day >= 20) || (month === 5 && day <= 20)) return ZODIAC.taurus;
+  if ((month === 5 && day >= 21) || (month === 6 && day <= 20)) return ZODIAC.gemini;
+  if ((month === 6 && day >= 21) || (month === 7 && day <= 22)) return ZODIAC.cancer;
+  if ((month === 7 && day >= 23) || (month === 8 && day <= 22)) return ZODIAC.leo;
+  if ((month === 8 && day >= 23) || (month === 9 && day <= 22)) return ZODIAC.virgo;
+  if ((month === 9 && day >= 23) || (month === 10 && day <= 22)) return ZODIAC.libra;
+  if ((month === 10 && day >= 23) || (month === 11 && day <= 21)) return ZODIAC.scorpio;
+  if ((month === 11 && day >= 22) || (month === 12 && day <= 21)) return ZODIAC.sagittarius;
+  if ((month === 12 && day >= 22) || (month === 1 && day <= 19)) return ZODIAC.capricorn;
+  if ((month === 1 && day >= 20) || (month === 2 && day <= 18)) return ZODIAC.aquarius;
+  return ZODIAC.pisces;
+}
+
+const DATA = {
+  1:  { days: [19], people: [
+        { name: 'Beto Jinete', role: 'UX Designer',          initials: 'BJ', photo: 'avatars/Beto.png',        organizer: 'Rodri' }
+      ]},
+  2:  { days: [12], people: [
+        { name: 'Basi',       role: 'UX Designer',          initials: 'BA', photo: 'avatars/basi.png',        organizer: 'Nando' }
+      ]},
+  3:  { days: [13], people: [
+        { name: 'Kai',        role: 'UX Designer',          initials: 'KA', photo: 'avatars/kai.png',         organizer: 'Basi' }
+      ]},
+  4:  { days: [8,14,26], people: [
+        { name: 'Pau Kina',   role: 'UX Designer',          initials: 'PK', photo: 'avatars/Pauli Kina.png', organizer: 'Beto' },
+        { name: 'Caro',       role: 'UX Designer',          initials: 'CA', photo: 'avatars/caro.png',        organizer: 'Pau Kina' },
+        { name: 'Yuzo',       role: 'UX Designer',          initials: 'YU', photo: 'avatars/yuzo.png',        organizer: 'Kai' }
+      ]},
+  5:  { days: [7,13], people: [
+        { name: 'Babi',       role: 'UX Designer',          initials: 'BA', photo: 'avatars/babi.png',        organizer: 'Yuzo' },
+        { name: 'Julia',      role: 'UX Designer',          initials: 'JU', photo: 'avatars/julia.png' }
+      ]},
+  6:  { days: [], people: [] },
+  7:  { days: [14,21], people: [
+        { name: 'Seba',       role: 'Project Leader',       initials: 'SE', photo: 'avatars/seba.png',        organizer: 'Caro' },
+        { name: 'Abri',       role: 'UX Designer',          initials: 'AB', photo: 'avatars/abri.png',        organizer: 'Seba' }
+      ]},
+  8:  { days: [31], people: [
+        { name: 'Max',        role: 'UX Designer',          initials: 'MA', photo: 'avatars/max.png',         organizer: 'Abri' }
+      ]},
+  9:  { days: [11,27], people: [
+        { name: 'Jojo',       role: 'UX Designer',          initials: 'JO', photo: 'avatars/JoJo.png',        organizer: 'Max' },
+        { name: 'Nando',      role: 'PL UX',                initials: 'NA', photo: 'avatars/nando.png',       organizer: 'Babi' }
+      ]},
+  10: { days: [8,11,20], people: [
+        { name: 'Pauli',      role: 'UX Designer',          initials: 'PA', photo: 'avatars/pauli.png',       organizer: 'Jojo' },
+        { name: 'Luigi',      role: 'UX Designer',          initials: 'LU', photo: 'avatars/luigi.png',       organizer: 'Pauli' },
+        { name: 'Bian',       role: 'Project Leader',       initials: 'BI', photo: 'avatars/bian.png',        organizer: 'Luigi' }
+      ]},
+  11: { days: [3,25,29], people: [
+        { name: 'Ale',        role: 'EXPERT',               initials: 'AL', photo: 'avatars/ale.png' },
+        { name: 'Marian',     role: 'UX Designer',          initials: 'MA', photo: 'avatars/marian.png',      organizer: 'Bian' },
+        { name: 'Silvi',      role: 'UX Manager',           initials: 'SI', photo: 'avatars/Sil.png',         organizer: 'Marian' }
+      ]},
+  12: { days: [5,24], people: [
+        { name: 'Jo',         role: 'UX Designer',          initials: 'JO', photo: 'avatars/jo.png',          organizer: 'Silvi' },
+        { name: 'Rodri',      role: 'Technical Leader',     initials: 'RO', photo: 'avatars/rodri.png',       organizer: 'Jo' }
+      ]}
+};
+
+// ===== NAVIGATION =====
+function goTo(viewId) {
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.getElementById(viewId).classList.add('active');
+  window.scrollTo(0, 0);
+}
+
+// ===== PERSON LOOKUP =====
+function findPerson(name) {
+  for (const m of Object.values(DATA)) {
+    const p = m.people.find(p => p.name === name || p.name.startsWith(name + ' '));
+    if (p) return p;
+  }
+  return null;
+}
+
+function getOrganizes(personName) {
+  for (const [mKey, m] of Object.entries(DATA)) {
+    for (let i = 0; i < m.people.length; i++) {
+      const p = m.people[i];
+      if (p.organizer && (p.organizer === personName || personName.startsWith(p.organizer + ' ') || personName === p.organizer)) {
+        return { person: p, day: m.days[i], month: parseInt(mKey) };
+      }
+    }
+  }
+  return null;
+}
+
+function flipCard(card) {
+  card.classList.toggle('flipped');
+}
+
+// ===== NEXT BIRTHDAY =====
+function getNextBirthday() {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  let closest = null;
+  let minDays = Infinity;
+  for (const [mKey, monthData] of Object.entries(DATA)) {
+    const m = parseInt(mKey);
+    monthData.people.forEach((p, i) => {
+      const day = monthData.days[i];
+      if (!day) return;
+      let bday = new Date(today.getFullYear(), m - 1, day);
+      if (bday < today) bday = new Date(today.getFullYear() + 1, m - 1, day);
+      const diff = Math.round((bday - today) / (1000 * 60 * 60 * 24));
+      if (diff < minDays) {
+        minDays = diff;
+        closest = { person: p, month: m, day, daysUntil: diff };
+      }
+    });
+  }
+  return closest;
+}
+
+let _nextCountdownInterval = null;
+
+function renderNextBanner() {
+  if (_nextCountdownInterval) { clearInterval(_nextCountdownInterval); _nextCountdownInterval = null; }
+  const next = getNextBirthday();
+  const banner = document.getElementById('next-banner');
+  if (!next) { banner.style.display = 'none'; return; }
+  const { person: p, month, day } = next;
+
+  const avatarContent = p.photo
+    ? `<img src="${p.photo}" alt="${p.name}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">`
+    : `<span style="font-family:Arial Black,Arial;font-size:14px;font-weight:900;color:white">${p.initials}</span>`;
+  const avatarBg = p.photo ? '#eee' : AVATAR_COLORS[0];
+
+  banner.innerHTML = `
+    <div class="next-banner-label">PRÓXIMO CUMPLE</div>
+    <div class="next-banner-countdown">EN <span id="next-cd"></span></div>
+    <div class="next-banner-identity">
+      <div class="next-banner-avatar" style="background:${avatarBg}">${avatarContent}</div>
+      <div class="next-banner-info">
+        <div class="next-banner-person">${p.name.toUpperCase()}</div>
+        <div class="next-banner-date">${String(day).padStart(2,'0')}/${String(month).padStart(2,'0')}</div>
+      </div>
+    </div>`;
+
+  function updateCd() {
+    const el = document.getElementById('next-cd');
+    if (!el) { clearInterval(_nextCountdownInterval); return; }
+    const now = new Date();
+    let target = new Date(now.getFullYear(), month - 1, day);
+    target.setHours(0, 0, 0, 0);
+    if (target <= now) target = new Date(now.getFullYear() + 1, month - 1, day);
+    const diff = target - now;
+    if (diff <= 0) { el.textContent = 'HOY!'; return; }
+    const d = Math.floor(diff / 86400000);
+    const h = Math.floor((diff % 86400000) / 3600000);
+    const m = Math.floor((diff % 3600000) / 60000);
+    const s = Math.floor((diff % 60000) / 1000);
+    const pad = n => String(n).padStart(2, '0');
+    el.textContent = `${d} ${d === 1 ? 'día' : 'días'} ${pad(h)}h ${pad(m)}m ${pad(s)}s`;
+  }
+  updateCd();
+  _nextCountdownInterval = setInterval(updateCd, 1000);
+}
+
+// ===== RENDER MONTH GRID =====
+function renderGrid() {
+  const grid = document.getElementById('grid-main');
+  for (let m = 1; m <= 12; m++) {
+    const monthData = DATA[m] || { days: [], people: [] };
+    const count = monthData.people.length;
+
+    const miniAvatarsHtml = count === 0
+      ? `<div class="mini-avatar-empty">—</div>`
+      : monthData.people.map((p, i) => {
+          const color = AVATAR_COLORS[i % AVATAR_COLORS.length];
+          const imgSrc = p.photo
+            ? `<img src="${p.photo}" alt="${p.name}" onerror="this.parentElement.style.background='${color}';this.replaceWith(document.createTextNode('${p.initials}'))">`
+            : p.initials;
+          return `<div class="mini-avatar" style="background:${p.photo ? '#eee' : color}">${imgSrc}</div>`;
+        }).join('');
+
+    const btn = document.createElement('button');
+    btn.className = count === 0 ? 'month-btn disabled' : 'month-btn';
+    const pillHtml = count === 0
+      ? `<div class="month-pill">sin cumples</div>`
+      : `<div class="month-pill">${count} cumple${count > 1 ? 's' : ''}</div>`;
+
+    btn.innerHTML = `
+      <div class="month-tile">
+        ${COIN_HTML}
+        <div class="month-name">${MONTH_NAMES[m-1].toUpperCase()}</div>
+        ${pillHtml}
+        <div class="mini-avatars">${miniAvatarsHtml}</div>
+      </div>`;
+    if (count > 0) btn.onclick = () => openMonth(m);
+    grid.appendChild(btn);
+  }
+}
+
+// ===== OPEN MONTH DETAIL =====
+function openMonth(month) {
+  const monthData = DATA[month] || { days: [], people: [] };
+
+  document.getElementById('detail-title').textContent = MONTH_NAMES[month-1];
+
+  const list = document.getElementById('detail-people');
+  list.innerHTML = '';
+
+  if (monthData.people.length === 0) {
+    list.innerHTML = `<div class="no-birthdays">Sin cumpleaños este mes 🎈</div>`;
+  } else {
+    monthData.people.forEach((p, i) => {
+      const color = AVATAR_COLORS[i % AVATAR_COLORS.length];
+      const day = monthData.days[i] ?? monthData.days[0] ?? '?';
+      const card = document.createElement('div');
+      card.className = 'person-card';
+
+      const avatarContent = p.photo
+        ? `<img src="${p.photo}" alt="${p.name}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;" onerror="this.parentElement.style.background='${color}';this.replaceWith(document.createTextNode('${p.initials}'))">`
+        : p.initials;
+      const avatarBg = p.photo ? '#eee' : color;
+
+      const orgBlock = p.organizer ? (() => {
+        const org = findPerson(p.organizer);
+        const orgAvatar = org?.photo
+          ? `<img class="org-avatar" src="${org.photo}" alt="${p.organizer}">`
+          : `<div class="org-avatar" style="background:${AVATAR_COLORS[0]};display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:900;color:white;font-family:Arial Black,Arial">${p.organizer[0]}</div>`;
+        return `<div class="person-organizer">${orgAvatar}<div class="org-info"><div class="org-label">organiza</div><div class="org-name">${p.organizer}</div></div></div>`;
+      })() : '';
+
+      // Back: birthday they organize
+      const organizes = getOrganizes(p.name);
+      let backContent;
+      const expertMsg = `<div class="back-label" style="font-size:8px;line-height:2;opacity:1">Una gran responsabilidad conlleva un gran beneficio. No organizás ningún cumple, pero tus cumples son a la gorra.</div>`;
+      if (p.role === 'EXPERT' || p.name === 'Julia') {
+        backContent = expertMsg;
+      } else if (organizes) {
+        const { person: bp, day: bday, month: bmonth } = organizes;
+        const backAvatarContent = bp.photo
+          ? `<img src="${bp.photo}" alt="${bp.name}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">`
+          : bp.initials;
+        const backAvatarBg = bp.photo ? '#eee' : AVATAR_COLORS[0];
+        backContent = `
+          <div class="back-label">organizás el<br>cumple de</div>
+          <div class="person-avatar" style="background:${backAvatarBg};width:80px;height:80px;font-size:24px;margin:0 auto;border-color:#4db84d;">${backAvatarContent}</div>
+          <div class="back-name">${bp.name}</div>
+          <div class="back-date"><span class="date-day">${bday}</span><span class="date-month">${MONTH_NAMES[bmonth-1]}</span></div>`;
+      } else {
+        backContent = `<div class="back-label" style="opacity:0.5">sin cumple asignado</div>`;
+      }
+
+
+      card.innerHTML = `
+        <div class="card-inner">
+          <div class="card-face card-front">
+            <div class="person-avatar-wrap">
+              <div class="person-avatar" style="background:${avatarBg}">${avatarContent}</div>
+              <div class="person-day">🎂 ${day}</div>
+            </div>
+            <div class="person-name">${p.name}</div>
+            <div class="person-role">${p.role}</div>
+            ${(() => {
+              const z = getZodiacSign(month, day);
+              const phrase = z.phrases[Math.floor(Math.random() * z.phrases.length)];
+              return `<div class="person-zodiac">
+                <div class="zodiac-sign">${z.symbol} ${z.name.toUpperCase()}</div>
+                <div class="zodiac-phrase">${phrase}</div>
+              </div>`;
+            })()}
+            ${orgBlock}
+          </div>
+          <div class="card-face card-back">${backContent}</div>
+        </div>`;
+      list.appendChild(card);
+    });
+  }
+
+  goTo('view-month');
+}
+
+// ===== CLOUDS =====
+function renderClouds() {
+  const container = document.getElementById('clouds-container');
+
+  // Todos parten desde left: 110% (fuera de pantalla derecha).
+  // El delay negativo simula que ya llevan N segundos moviéndose,
+  // distribuyéndolas por la pantalla sin que "aparezcan" en el medio.
+  // Posición visual inicial = 110% - (|delay| / speed * 130%)
+  const clouds = [
+    { top:  8, size: 150, speed: 22 },
+    { top: 35, size: 110, speed: 28 },
+    { top: 60, size: 130, speed: 20 },
+    { top: 18, size: 90,  speed: 25 },
+    { top: 72, size: 160, speed: 18 },
+    { top: 45, size: 120, speed: 30 },
+    { top: 12, size: 100, speed: 24 },
+    { top: 55, size: 140, speed: 21 },
+    { top: 28, size: 115, speed: 27 },
+    { top: 68, size: 95,  speed: 19 },
+    { top: 40, size: 155, speed: 23 },
+    { top: 15, size: 125, speed: 26 },
+  ];
+
+  // Posiciones visuales de inicio distribuidas de 0% a 100%
+  const startX = [0, 9, 18, 27, 36, 45, 55, 64, 73, 82, 91, 100];
+
+  clouds.forEach(({ top, size, speed }, i) => {
+    // delay = -speed * (110 - startX) / 130  → nube arranca en startX[i]%
+    const delay = -(speed * (110 - startX[i]) / 130).toFixed(2);
+    const h = Math.round(size * 0.48);
+    const el = document.createElement('div');
+    el.className = 'cloud';
+    el.style.cssText = `
+      width:${size}px; height:${h}px;
+      top:${top}%;
+      left:110%;
+      animation: drift ${speed}s linear ${delay}s infinite;
+    `;
+    container.appendChild(el);
+  });
+}
+
+// ===== INIT =====
+renderGrid();
+renderNextBanner();
+renderClouds();
+</script>
+</body>
+</html>
