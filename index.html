@@ -21,7 +21,23 @@
     --mlb-dark: #222;
   }
 
-  * { margin: 0; padding: 0; box-sizing: border-box; cursor: url('imagenes/block-cursor.png') 16 16, auto; }
+  * { margin: 0; padding: 0; box-sizing: border-box; cursor: none !important; }
+
+  #custom-cursor {
+    position: fixed;
+    width: 32px;
+    height: 32px;
+    background: url('imagenes/hongo.png') center/contain no-repeat;
+    pointer-events: none;
+    z-index: 99999;
+    transform: translate(-50%, -50%) scale(1);
+    transition: transform 0.15s ease, width 0.15s ease, height 0.15s ease;
+    image-rendering: pixelated;
+  }
+
+  #custom-cursor.hovered {
+    transform: translate(-50%, -50%) scale(2);
+  }
 
   html, body { overflow-x: hidden; }
 
@@ -572,11 +588,12 @@
 </head>
 <body>
 
+<div id="custom-cursor"></div>
 <div class="clouds" id="clouds-container"></div>
 
 <!-- ==================== HOME ==================== -->
 <div id="view-home" class="view active">
-  <div class="main-title">CUMPLES<br>MONEY MANAGEMENT</div>
+  <div class="main-title">CUMPLES MONEY MANAGEMENT</div>
   <div id="next-banner" class="next-banner"></div>
   <div class="months-grid" id="grid-main"></div>
 </div>
@@ -975,6 +992,19 @@ function renderClouds() {
     container.appendChild(el);
   });
 }
+
+// ===== CUSTOM CURSOR =====
+(function() {
+  const cursor = document.getElementById('custom-cursor');
+  document.addEventListener('mousemove', e => {
+    cursor.style.left = e.clientX + 'px';
+    cursor.style.top  = e.clientY + 'px';
+  });
+  document.addEventListener('mouseover', e => {
+    const el = e.target.closest('a, button, [onclick], .person-card, .month-btn');
+    cursor.classList.toggle('hovered', !!el);
+  });
+})();
 
 // ===== INIT =====
 renderGrid();
