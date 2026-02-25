@@ -744,6 +744,26 @@
     align-items: center;
     gap: 4px;
   }
+
+  /* ===== WISHLIST LOADER ===== */
+  .wl-loader {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    margin-top: 80px;
+  }
+  .wl-loader img {
+    width: 48px;
+    height: 48px;
+    image-rendering: pixelated;
+    animation: coin-spin 0.7s linear infinite;
+  }
+  .wl-loader-text {
+    font-size: 9px;
+    color: rgba(0,0,0,0.45);
+    letter-spacing: 1px;
+  }
   .wl-modal-actions {
     display: flex;
     gap: 12px;
@@ -874,7 +894,11 @@
 <div id="view-wishlist" class="view">
   <button class="back-btn" onclick="goTo('view-home')">◀ VOLVER</button>
   <div class="main-title" style="font-size: clamp(16px, 2.5vw, 24px); margin-bottom: 28px;">WISHLIST DEL TEAM</div>
-  <div class="wishlist-grid" id="wishlist-grid"></div>
+  <div class="wl-loader" id="wl-loader">
+    <img src="imagenes/coin.png" alt="cargando">
+    <div class="wl-loader-text">CARGANDO LAS LISTAS</div>
+  </div>
+  <div class="wishlist-grid" id="wishlist-grid" style="display:none"></div>
 </div>
 
 <!-- ==================== EDIT MODAL ==================== -->
@@ -1322,6 +1346,8 @@ function _personKey(name) {
 
 function openWishlistView() {
   if (!_db) _initFirebase();
+  document.getElementById('wl-loader').style.display = 'flex';
+  document.getElementById('wishlist-grid').style.display = 'none';
   goTo('view-wishlist');
   _subscribeWishlists();
 }
@@ -1333,6 +1359,8 @@ function _subscribeWishlists() {
     _wishlists = {};
     snapshot.forEach(doc => { _wishlists[doc.id] = doc.data().items || []; });
     _renderWishlistGrid();
+    document.getElementById('wl-loader').style.display = 'none';
+    document.getElementById('wishlist-grid').style.display = 'grid';
   }, err => console.error('Wishlists error:', err));
 }
 
