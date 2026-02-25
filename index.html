@@ -754,14 +754,14 @@
     margin-top: 80px;
   }
   .wl-loader img {
-    width: 48px;
-    height: 48px;
+    width: 80px;
+    height: 80px;
     image-rendering: pixelated;
     animation: coin-spin 0.7s linear infinite;
   }
   .wl-loader-text {
-    font-size: 9px;
-    color: rgba(0,0,0,0.45);
+    font-size: 12px;
+    color: #000;
     letter-spacing: 1px;
   }
   .wl-modal-actions {
@@ -1358,9 +1358,11 @@ function _subscribeWishlists() {
   _wlUnsubscribe = _db.collection('wishlists').onSnapshot(snapshot => {
     _wishlists = {};
     snapshot.forEach(doc => { _wishlists[doc.id] = doc.data().items || []; });
-    _renderWishlistGrid();
-    document.getElementById('wl-loader').style.display = 'none';
-    document.getElementById('wishlist-grid').style.display = 'grid';
+    setTimeout(() => {
+      _renderWishlistGrid();
+      document.getElementById('wl-loader').style.display = 'none';
+      document.getElementById('wishlist-grid').style.display = 'grid';
+    }, 5000);
   }, err => console.error('Wishlists error:', err));
 }
 
