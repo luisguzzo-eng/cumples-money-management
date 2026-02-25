@@ -620,10 +620,9 @@
     line-height: 1.5;
   }
   .wl-items {
-    text-align: left;
+    text-align: center;
     border-top: 1px solid rgba(255,255,255,0.25);
-    padding-top: 8px;
-    min-height: 60px;
+    padding-top: 10px;
   }
   .wl-item {
     font-family: 'Montserrat', sans-serif;
@@ -643,6 +642,19 @@
     text-align: center;
     padding: 10px 0;
     line-height: 1.6;
+  }
+  .wl-count-pill {
+    display: inline-block;
+    background: rgba(0,0,0,0.2);
+    color: white;
+    font-size: 8px;
+    padding: 4px 12px;
+    border-radius: 20px;
+    letter-spacing: 0.5px;
+  }
+  .wl-count-empty {
+    color: rgba(255,255,255,0.4);
+    background: rgba(0,0,0,0.1);
   }
 
   /* ===== EDIT MODAL ===== */
@@ -1395,14 +1407,10 @@ function _renderWishlistGrid() {
     const avatarContent = p.photo
       ? `<img src="${p.photo}" alt="${p.name}" style="width:100%;height:100%;object-fit:cover;" onerror="this.parentElement.style.background='${color}';this.replaceWith(document.createTextNode('${p.initials}'))">`
       : p.initials;
-    const itemsHtml = items.length > 0
-      ? items.map(it => {
-          const text = typeof it === 'string' ? it : it.text;
-          const url  = typeof it === 'string' ? '' : (it.url || '');
-          const link = url ? `<a class="wl-item-link" href="${url}" target="_blank" rel="noopener" onclick="event.stopPropagation()">🔗</a>` : '';
-          return `<div class="wl-item"><div class="wl-item-row">• ${text}${link}</div></div>`;
-        }).join('')
-      : `<div class="wl-empty">Todavía no cargó su lista</div>`;
+    const count = items.length;
+    const itemsHtml = count > 0
+      ? `<div class="wl-count-pill">${count} item${count > 1 ? 's' : ''}</div>`
+      : `<div class="wl-count-pill wl-count-empty">sin lista</div>`;
 
     const card = document.createElement('div');
     card.className = 'wl-card';
