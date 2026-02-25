@@ -517,6 +517,255 @@
     letter-spacing: 0.5px;
   }
 
+  /* ===== WISHLIST HOME BUTTON ===== */
+  .wl-home-btn {
+    font-family: inherit;
+    font-size: 9px;
+    padding: 12px 28px;
+    border-radius: 12px;
+    border: 3px solid #000;
+    cursor: pointer;
+    letter-spacing: 1px;
+    background: #2a7a2a;
+    color: white;
+    box-shadow: inset 0 0 0 5px #4db84d, 4px 4px 0 0 #000;
+    margin-bottom: 40px;
+    transition: transform 0.08s, box-shadow 0.08s;
+  }
+  .wl-home-btn:hover {
+    transform: translate(-1px, -2px);
+    box-shadow: inset 0 0 0 5px #4db84d, 5px 6px 0 0 #000;
+  }
+  .wl-home-btn:active {
+    transform: translate(3px, 3px);
+    box-shadow: inset 0 0 0 5px #4db84d, 1px 1px 0 0 #000;
+  }
+
+  /* ===== WISHLIST VIEW ===== */
+  .wl-identity {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 40px;
+    background: rgba(0,0,0,0.12);
+    padding: 12px 20px;
+    border-radius: 12px;
+  }
+  .wl-id-label {
+    font-size: 7px;
+    color: var(--black);
+    letter-spacing: 1px;
+    white-space: nowrap;
+  }
+  #wl-who {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 8px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    color: var(--black);
+    outline: none;
+    max-width: 220px;
+  }
+
+  /* ===== WISHLIST GRID ===== */
+  .wishlist-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 20px;
+    max-width: 1200px;
+    width: 100%;
+  }
+  .wl-card {
+    background: #e87820;
+    border-radius: 16px;
+    padding: 20px 14px 16px;
+    text-align: center;
+    border: 4px solid #000;
+    box-shadow: inset 0 0 0 7px #f0b098, 4px 4px 0 0 #000;
+    outline: 3px solid #000;
+    outline-offset: -13px;
+    position: relative;
+    transition: transform 0.08s, box-shadow 0.08s;
+  }
+  .wl-card:hover {
+    transform: translate(-1px, -2px);
+    background: #2a7a2a;
+    box-shadow: inset 0 0 0 7px #4db84d, 5px 6px 0 0 #000;
+  }
+  .wl-card:active {
+    transform: translate(3px, 3px);
+    box-shadow: inset 0 0 0 7px #f0b098, 1px 1px 0 0 #000;
+  }
+  .wl-avatar {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    margin: 0 auto 10px;
+    border: 3px solid white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: Arial Black, Arial;
+    font-size: 20px;
+    font-weight: 900;
+    color: white;
+    overflow: hidden;
+  }
+  .wl-name {
+    font-size: 9px;
+    color: white;
+    margin-bottom: 10px;
+    letter-spacing: 0.5px;
+    line-height: 1.5;
+  }
+  .wl-items {
+    text-align: left;
+    border-top: 1px solid rgba(255,255,255,0.25);
+    padding-top: 8px;
+    min-height: 60px;
+  }
+  .wl-item {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 11px;
+    color: rgba(255,255,255,0.92);
+    line-height: 1.7;
+    padding: 1px 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .wl-empty {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 10px;
+    color: rgba(255,255,255,0.45);
+    font-style: italic;
+    text-align: center;
+    padding: 10px 0;
+    line-height: 1.6;
+  }
+
+  /* ===== EDIT MODAL ===== */
+  .wl-modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.65);
+    z-index: 10000;
+    align-items: center;
+    justify-content: center;
+  }
+  .wl-modal-overlay.open {
+    display: flex;
+  }
+  .wl-modal-inner {
+    background: #e87820;
+    border-radius: 20px;
+    padding: 32px 28px;
+    border: 4px solid #000;
+    box-shadow: inset 0 0 0 9px #f0b098, 6px 6px 0 0 #000;
+    outline: 3px solid #000;
+    outline-offset: -15px;
+    width: 340px;
+    max-width: 92vw;
+  }
+  .wl-modal-title {
+    font-size: 12px;
+    color: white;
+    text-align: center;
+    margin-bottom: 24px;
+    letter-spacing: 1px;
+    line-height: 2;
+  }
+  .wl-input-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+  .wl-input-num {
+    font-size: 9px;
+    color: rgba(255,255,255,0.55);
+    width: 14px;
+    flex-shrink: 0;
+    text-align: right;
+  }
+  .wl-input {
+    flex: 1;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 13px;
+    background: rgba(0,0,0,0.2);
+    border: 2px solid rgba(255,255,255,0.2);
+    border-radius: 8px;
+    padding: 8px 12px;
+    color: white;
+    outline: none;
+    transition: border-color 0.15s;
+  }
+  .wl-input:focus { border-color: rgba(255,255,255,0.6); }
+  .wl-input::placeholder { color: rgba(255,255,255,0.3); }
+  .wl-url-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: -4px;
+    margin-bottom: 10px;
+    padding-left: 24px;
+  }
+  .wl-url-prefix {
+    font-size: 10px;
+    opacity: 0.5;
+    flex-shrink: 0;
+  }
+  .wl-url-input {
+    flex: 1;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 10px;
+    background: rgba(0,0,0,0.12);
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 6px;
+    padding: 5px 10px;
+    color: rgba(255,255,255,0.7);
+    outline: none;
+    transition: border-color 0.15s;
+  }
+  .wl-url-input:focus { border-color: rgba(255,255,255,0.5); color: white; }
+  .wl-url-input::placeholder { color: rgba(255,255,255,0.25); }
+  .wl-item-link {
+    font-size: 10px;
+    text-decoration: none;
+    opacity: 0.7;
+    flex-shrink: 0;
+    transition: opacity 0.15s;
+  }
+  .wl-item-link:hover { opacity: 1; }
+  .wl-item-row {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .wl-modal-actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 24px;
+    justify-content: center;
+  }
+  .wl-save-btn, .wl-cancel-btn {
+    font-family: inherit;
+    font-size: 8px;
+    padding: 10px 22px;
+    border-radius: 10px;
+    border: 3px solid #000;
+    cursor: pointer;
+    letter-spacing: 1px;
+    transition: transform 0.08s, box-shadow 0.08s;
+    box-shadow: 3px 3px 0 0 #000;
+  }
+  .wl-save-btn { background: #2a7a2a; color: white; }
+  .wl-cancel-btn { background: rgba(0,0,0,0.2); color: white; }
+  .wl-save-btn:hover, .wl-cancel-btn:hover { transform: translate(-1px,-1px); box-shadow: 4px 4px 0 0 #000; }
+  .wl-save-btn:active, .wl-cancel-btn:active { transform: translate(2px,2px); box-shadow: 1px 1px 0 0 #000; }
+
   /* ===== NEXT BIRTHDAY BANNER ===== */
   .next-banner {
     display: flex;
@@ -596,6 +845,7 @@
 <div id="view-home" class="view active">
   <div class="main-title">CUMPLES MONEY MANAGEMENT</div>
   <div id="next-banner" class="next-banner"></div>
+  <button class="wl-home-btn" onclick="openWishlistView()">🎁 WISHLIST DEL TEAM</button>
   <div class="months-grid" id="grid-main"></div>
 </div>
 
@@ -615,6 +865,29 @@
   <div class="budget-note">Para MLA el presupuesto es de 5 USD o 10 mil pesos aproximadamente.</div>
 </div>
 
+
+<!-- Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+
+<!-- ==================== WISHLIST ==================== -->
+<div id="view-wishlist" class="view">
+  <button class="back-btn" onclick="goTo('view-home')">◀ VOLVER</button>
+  <div class="main-title" style="font-size: clamp(16px, 2.5vw, 24px); margin-bottom: 28px;">WISHLIST DEL TEAM</div>
+  <div class="wishlist-grid" id="wishlist-grid"></div>
+</div>
+
+<!-- ==================== EDIT MODAL ==================== -->
+<div id="wl-modal" class="wl-modal-overlay" onclick="closeEditModal(event)">
+  <div class="wl-modal-inner">
+    <div class="wl-modal-title">MI WISHLIST</div>
+    <div id="wl-modal-inputs"></div>
+    <div class="wl-modal-actions">
+      <button class="wl-save-btn" onclick="saveWishlist()">GUARDAR</button>
+      <button class="wl-cancel-btn" onclick="closeEditModal()">CANCELAR</button>
+    </div>
+  </div>
+</div>
 
 <script>
 // ===== DATA =====
@@ -1002,10 +1275,152 @@ function renderClouds() {
     cursor.style.top  = e.clientY + 'px';
   });
   document.addEventListener('mouseover', e => {
-    const el = e.target.closest('a, button, [onclick], .person-card, .month-btn');
+    const el = e.target.closest('a, button, [onclick], .person-card, .month-btn, .wl-card');
     cursor.classList.toggle('hovered', !!el);
   });
 })();
+
+// ===== WISHLISTS =====
+
+// 🔧 REEMPLAZAR con tu configuración de Firebase
+// Ir a https://console.firebase.google.com → crear proyecto → agregar app web → copiar config
+const FIREBASE_CONFIG = {
+  apiKey: "AIzaSyD0D3e_BiJrke5YwMFlYGbgUplNdJDkt8c",
+  authDomain: "cumplesmm-e68da.firebaseapp.com",
+  projectId: "cumplesmm-e68da",
+  storageBucket: "cumplesmm-e68da.firebasestorage.app",
+  messagingSenderId: "916419996927",
+  appId: "1:916419996927:web:fe28892b9b320090de30ca"
+};
+
+let _db = null;
+let _wishlists = {};
+let _wlUnsubscribe = null;
+let _wlEditingKey = null;
+
+function _initFirebase() {
+  if (typeof firebase === 'undefined') return false;
+  if (FIREBASE_CONFIG.apiKey === 'REEMPLAZAR') return false;
+  if (!firebase.apps.length) firebase.initializeApp(FIREBASE_CONFIG);
+  _db = firebase.firestore();
+  return true;
+}
+
+function _getAllPeople() {
+  const people = [];
+  for (const [mKey, monthData] of Object.entries(DATA)) {
+    monthData.people.forEach((p, i) => {
+      people.push({ ...p, _month: parseInt(mKey), _day: monthData.days[i] });
+    });
+  }
+  return people;
+}
+
+function _personKey(name) {
+  return name.toLowerCase().replace(/\s+/g, '_');
+}
+
+function openWishlistView() {
+  if (!_db) _initFirebase();
+  goTo('view-wishlist');
+  _subscribeWishlists();
+}
+
+function _subscribeWishlists() {
+  if (!_db) { _renderWishlistGrid(); return; }
+  if (_wlUnsubscribe) _wlUnsubscribe();
+  _wlUnsubscribe = _db.collection('wishlists').onSnapshot(snapshot => {
+    _wishlists = {};
+    snapshot.forEach(doc => { _wishlists[doc.id] = doc.data().items || []; });
+    _renderWishlistGrid();
+  }, err => console.error('Wishlists error:', err));
+}
+
+function _renderWishlistGrid() {
+  const grid = document.getElementById('wishlist-grid');
+  if (!grid) return;
+  const people = _getAllPeople();
+  grid.innerHTML = '';
+  people.forEach((p, idx) => {
+    const key = _personKey(p.name);
+    const items = (_wishlists[key] || []).slice(0, 4);
+    const color = AVATAR_COLORS[idx % AVATAR_COLORS.length];
+    const avatarBg = p.photo ? '#eee' : color;
+    const avatarContent = p.photo
+      ? `<img src="${p.photo}" alt="${p.name}" style="width:100%;height:100%;object-fit:cover;" onerror="this.parentElement.style.background='${color}';this.replaceWith(document.createTextNode('${p.initials}'))">`
+      : p.initials;
+    const itemsHtml = items.length > 0
+      ? items.map(it => {
+          const text = typeof it === 'string' ? it : it.text;
+          const url  = typeof it === 'string' ? '' : (it.url || '');
+          const link = url ? `<a class="wl-item-link" href="${url}" target="_blank" rel="noopener" onclick="event.stopPropagation()">🔗</a>` : '';
+          return `<div class="wl-item"><div class="wl-item-row">• ${text}${link}</div></div>`;
+        }).join('')
+      : `<div class="wl-empty">Todavía no cargó su lista</div>`;
+
+    const card = document.createElement('div');
+    card.className = 'wl-card';
+    card.onclick = () => _openEditModal(key, p.name);
+    card.innerHTML = `
+      <div class="wl-avatar" style="background:${avatarBg}">${avatarContent}</div>
+      <div class="wl-name">${p.name.toUpperCase()}</div>
+      <div class="wl-items">${itemsHtml}</div>`;
+    grid.appendChild(card);
+  });
+}
+
+function _openEditModal(key, name) {
+  _wlEditingKey = key;
+  document.querySelector('.wl-modal-title').textContent = `WISHLIST DE ${name.toUpperCase()}`;
+  const items = _wishlists[key] || [];
+  const cont = document.getElementById('wl-modal-inputs');
+  cont.innerHTML = '';
+  for (let i = 0; i < 4; i++) {
+    const it  = items[i] || {};
+    const txt = (typeof it === 'string' ? it : (it.text || '')).replace(/"/g, '&quot;');
+    const url = (typeof it === 'string' ? '' : (it.url  || '')).replace(/"/g, '&quot;');
+    const wrap = document.createElement('div');
+    wrap.innerHTML = `
+      <div class="wl-input-row">
+        <span class="wl-input-num">${i + 1}.</span>
+        <input class="wl-input" type="text" maxlength="50" placeholder="Ej: Auriculares inalámbricos" value="${txt}">
+      </div>
+      <div class="wl-url-row">
+        <span class="wl-url-prefix">🔗</span>
+        <input class="wl-url-input" type="url" placeholder="Link (opcional)" value="${url}">
+      </div>`;
+    cont.appendChild(wrap);
+  }
+  document.getElementById('wl-modal').classList.add('open');
+}
+
+function closeEditModal(e) {
+  if (e && e.target !== document.getElementById('wl-modal')) return;
+  document.getElementById('wl-modal').classList.remove('open');
+}
+
+async function saveWishlist() {
+  if (!_wlEditingKey || !_db) return;
+  const textInputs = document.querySelectorAll('#wl-modal-inputs .wl-input');
+  const urlInputs  = document.querySelectorAll('#wl-modal-inputs .wl-url-input');
+  const items = Array.from(textInputs).map((inp, i) => {
+    const text = inp.value.trim();
+    const url  = urlInputs[i]?.value.trim() || '';
+    if (!text) return null;
+    return url ? { text, url } : { text };
+  }).filter(Boolean);
+  try {
+    await _db.collection('wishlists').doc(_wlEditingKey).set({ items });
+    document.getElementById('wl-modal').classList.remove('open');
+  } catch (err) {
+    console.error('Error guardando wishlist:', err);
+    alert('Error al guardar. Verificá la configuración de Firebase.');
+  }
+}
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') document.getElementById('wl-modal').classList.remove('open');
+});
 
 // ===== INIT =====
 renderGrid();
