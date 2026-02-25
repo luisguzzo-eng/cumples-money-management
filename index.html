@@ -1399,6 +1399,7 @@ function _renderWishlistGrid() {
   if (!grid) return;
   const people = _getAllPeople();
   grid.innerHTML = '';
+  people.sort((a, b) => a.name.localeCompare(b.name));
   people.forEach((p, idx) => {
     const key = _personKey(p.name);
     const items = (_wishlists[key] || []).slice(0, 4);
