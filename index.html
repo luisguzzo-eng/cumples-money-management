@@ -731,6 +731,24 @@
   }
   .wl-url-input:focus { border-color: rgba(255,255,255,0.5); color: white; }
   .wl-url-input::placeholder { color: rgba(255,255,255,0.25); }
+  .wl-open-link {
+    font-family: inherit;
+    font-size: 7px;
+    padding: 5px 10px;
+    border-radius: 6px;
+    border: 2px solid rgba(255,255,255,0.4);
+    background: rgba(255,255,255,0.15);
+    color: white;
+    cursor: pointer;
+    white-space: nowrap;
+    flex-shrink: 0;
+    letter-spacing: 0.5px;
+    transition: background 0.15s;
+    text-decoration: none;
+    display: none;
+  }
+  .wl-open-link.visible { display: inline-flex; align-items: center; }
+  .wl-open-link:hover { background: rgba(255,255,255,0.28); }
   .wl-item-link {
     font-size: 10px;
     text-decoration: none;
@@ -1358,11 +1376,9 @@ function _subscribeWishlists() {
   _wlUnsubscribe = _db.collection('wishlists').onSnapshot(snapshot => {
     _wishlists = {};
     snapshot.forEach(doc => { _wishlists[doc.id] = doc.data().items || []; });
-    setTimeout(() => {
-      _renderWishlistGrid();
-      document.getElementById('wl-loader').style.display = 'none';
-      document.getElementById('wishlist-grid').style.display = 'grid';
-    }, 1000);
+    _renderWishlistGrid();
+    document.getElementById('wl-loader').style.display = 'none';
+    document.getElementById('wishlist-grid').style.display = 'grid';
   }, err => console.error('Wishlists error:', err));
 }
 
@@ -1417,7 +1433,8 @@ function _openEditModal(key, name) {
       </div>
       <div class="wl-url-row">
         <span class="wl-url-prefix">🔗</span>
-        <input class="wl-url-input" type="url" placeholder="Link (opcional)" value="${url}">
+        <input class="wl-url-input" type="url" placeholder="Link (opcional)" value="${url}" oninput="var a=this.nextElementSibling;a.href=this.value||'#';a.className='wl-open-link'+(this.value.trim()?' visible':'')">
+        <a class="wl-open-link${url ? ' visible' : ''}" href="${url || '#'}" target="_blank" rel="noopener">ABRIR</a>
       </div>`;
     cont.appendChild(wrap);
   }
